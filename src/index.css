@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+  font-family: Poppins, "Courier New", Courier, monospace;
+}
+
+.topBar {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+button {
+  -webkit-app-region: no-drag;
+}
+
+.LyricsDisplay::-webkit-scrollbar {
+  display: none;
+}
+
+.vertical-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  vertical-align: bottom;
+}

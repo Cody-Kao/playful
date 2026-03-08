@@ -1,4 +1,5 @@
-import { LyricsResponse } from "../Types/types";
+import { ArtistTrackSeparator } from "../Const/const";
+import { LyricsResponse, SyncedLyricsData } from "../Types/types";
 
 export const formatTimestampStart = (timestamp: number): string => {
   const hours = Math.floor(timestamp / 3600);
@@ -108,25 +109,48 @@ export const getLyrics = async (songPath: string): Promise<LyricsResponse> => {
     const artist = extractArtistName(songPath);
     const songName = extractSongName(songPath);
     const res = await fetch(
-      `http://localhost:3001/lyrics?q=${artist}%20${songName}`,
+      `http://localhost:3001/lyrics?q=${artist}${ArtistTrackSeparator}${songName}`,
     );
     if (!res.ok) throw new Error("連線失敗");
     const data = await res.json();
     if (typeof data === "string") throw new Error("查無歌詞");
     return {
-      syncedLyrics: data,
+      fullLyricsData: data,
       error: "",
     } as LyricsResponse;
   } catch (error) {
     if (error instanceof Error) {
       return {
-        syncedLyrics: [],
+        fullLyricsData: null,
         error: error.message,
       };
     }
     return {
-      syncedLyrics: [],
+      fullLyricsData: null,
       error: "獲取歌詞出現未知錯誤",
     };
   }
+};
+
+export const parseLyricLine = (lines: string[]): SyncedLyricsData[] | null => {
+  const syncedLyricsData: SyncedLyricsData[] = [];
+  for (const line of lines) {
+    const match = line.match(/\[(\d+):(\d+)\.(\d+)\]\s*(.*)/);
+
+    if (!match) return null;
+
+    const minutes = parseInt(match[1], 10);
+    const seconds = parseInt(match[2], 10);
+    const ms = parseInt(match[3], 10);
+    const lyrics = match[4];
+
+    const totalSeconds = minutes * 60 + seconds + ms / 100;
+
+    syncedLyricsData.push({
+      seconds: totalSeconds,
+      lyrics,
+    });
+  }
+
+  return syncedLyricsData;
 };

@@ -1,7 +1,7 @@
 import { ComponentProps, useEffect, useState } from "react";
 import ColorPicker from "./ColorPicker";
 import { usePlayerContext } from "../context/PlayerContextProvider";
-import { getLyrics } from "../Utils/utils";
+import { getLyrics, parseLyricLine } from "../Utils/utils";
 import SyncedLyrics from "./SyncedLyrics";
 import { SyncedLyricsData } from "../Types/types";
 
@@ -26,10 +26,14 @@ export default function LyricsDisplay({
     }
     const fetchLyrics = async () => {
       const response = await getLyrics(curSong.songPath);
-      if (response.syncedLyrics.length === 0) {
+      console.log(response.fullLyricsData);
+      console.log(response.fullLyricsData?.syncedLyrics);
+      if (response.error !== "" || response.fullLyricsData === null) {
         setLyrics(null);
+        console.log(response.error ? response.error : "");
       } else {
-        setLyrics(response.syncedLyrics);
+        const lyricsData = response.fullLyricsData.syncedLyrics.split("\n");
+        setLyrics(parseLyricLine(lyricsData));
       }
     };
     fetchLyrics();

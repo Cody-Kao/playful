@@ -31,7 +31,15 @@ export type SyncedLyricsData = {
   seconds: number;
   lyrics: string;
 };
+export type FullLyricsData = {
+  albumName: string;
+  artistName: string;
+  trackName: string;
+  duration: number;
+  plainLyrics: string;
+  syncedLyrics: string;
+};
 export type LyricsResponse = {
-  syncedLyrics: SyncedLyricsData[];
+  fullLyricsData: FullLyricsData | null;
   error: string;
 };

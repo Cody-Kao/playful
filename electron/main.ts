@@ -25,6 +25,7 @@ import {
   playSong,
   resumePlay,
 } from "./lib";
+import { ArtistTrackSeparator } from "../src/Const/const";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The built directory structure
@@ -169,9 +170,10 @@ export const startServer = () => {
       const httpsAgent = new https.Agent({
         rejectUnauthorized: false, // WARNING: only use this in development!
       });
-
+      const [artistName, trackName] = query.split(ArtistTrackSeparator);
       const response = await axios.get(
-        `https://api.textyl.co/api/lyrics?q=${encodeURIComponent(query)}`,
+        `https://lrclib.net/api/get?artist_name=${artistName}&track_name=${trackName}`,
+        //`https://api.textyl.co/api/lyrics?q=${encodeURIComponent(query)}`,
         {
           httpsAgent,
         },
